@@ -3,3 +3,4 @@ plotly==5.20.0
 pickleshare==0.7.5
 pandas==2.0.3
 sklearn==0.0
+lightgbm==3.2.1
