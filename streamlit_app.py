@@ -32,7 +32,6 @@ def get_monthly_graph(dataframe, selected_month):
     monthly_y2_df['2012'] = monthly_y2_df['cnt']
     compare_graph = px.line(monthly_y2_df, x='dteday', y=['2012', '2011'],
                 labels={'cnt': 'Total Bike Counts', 'dteday': 'Date', 'year': 'Year'},
-                title='Monthly Bike Counts VS Previous Year',
                 template='ggplot2')
     return compare_graph
 
@@ -45,7 +44,6 @@ def get_yearly_graph(dataframe):
     monthly_y2_df['2012'] = monthly_y2_df['cnt']
     compare_graph = px.line(monthly_y2_df, x='dteday', y=['2012', '2011'],
                 labels={'cnt': 'Total Bike Counts', 'dteday': 'Date', 'year': 'Year'},
-                title='Bike Counts VS Previous Year',
                 template='ggplot2')
     return compare_graph
 
@@ -58,7 +56,6 @@ def get_yearly_avg_temp_graph(dataframe):
     monthly_y2_df['2012'] = monthly_y2_df['cnt']
     compare_graph = px.line(monthly_y2_df, x='dteday', y=['2012', 'temp'],
                             labels={'2012': 'Total Bike Counts', 'temp': 'Temperature', 'dteday': 'Date'},
-                            title='Bike Counts VS Temperature (2012)',
                             template='ggplot2')
     return compare_graph
 
@@ -126,25 +123,30 @@ def results_content(tab):
     tab.error('Here we are missing to show some other insights and visualizations')
     tab.write("Let's take a look at the bike-sharing data for 2012.")
 
-    # month with most rentals
-    
-    
+    # month with most rentalsç    
     tab.write(get_month_max_rentals(df, 2012))
-    tab.plotly_chart(get_yearly_graph(df))
-    tab.plotly_chart(get_yearly_avg_temp_graph(df))
 
+    tab.subheader('Bike Counts by Year')
+    tab.write('The graph below shows the bike counts for 2012 and compares them to 2011.')
+     # choose a month
+    months = {'All Months':0, 'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
+    selected_month = tab.selectbox('Select Month', months.keys(), index=0)
+    month = months[selected_month]
+
+    if month == 0:
+        yearly_graph = get_yearly_graph(df)
+        tab.plotly_chart(yearly_graph)
+    else:
+        monthly_graph = get_monthly_graph(df, month)
+        tab.plotly_chart(monthly_graph)
+
+    tab.subheader('Average Temperature vs Bike Counts')
+    tab.write('The graph below shows the average temperature and bike counts for 2012. The temperature Y-axis was scaled up to match the bike counts.')
+    tab.plotly_chart(get_yearly_avg_temp_graph(df))
 
     tab.subheader('Bike Counts by Month vs Previous Year')
 
-    # choose a month
-    month = tab.slider('Select Month', min_value=1, max_value=12, value=12)
-
-    # Filter the data for a month
-    monthly_graph = get_monthly_graph(df, month)
-
-
-    # Create a Plotly line chart with both years overlaid
-    tab.plotly_chart(monthly_graph)
+   
 
 # Tab 2 content
 def insights_content(tab):
@@ -216,18 +218,24 @@ def revenue_prediction_content(tab, col_names):
 
 def simulator_content(tab, model, col_names):
     tab.header('Simulator')
-    tab.error('Finish the input elements')
     tab.write("We can use this section to simulate different scenarios and see how much we can earn.")
-    
+
     tab.header('Prediction Input')
     col1, col2 = tab.columns(2)
 
     seasons = {'Spring': 1, 'Summer': 2, 'Fall': 3, 'Winter': 4}
     months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
+    weather_situations = {'Clear': 1, 'Mist + Cloudy': 2, 'Light Snow + Light Rain': 3, 'Heavy Rain + Ice Pallets + Thunderstorm + Mist': 4}
+    weekdays = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
 
     selected_season = col1.selectbox('Select Season', seasons.keys())
     selected_month = col1.selectbox('Select Month', months.keys())
+    weekday = col1.selectbox('Weekday', weekdays.keys())
+    workingday = 0 if weekday in ['Saturday', 'Sunday'] else 1
     selected_hour = col1.selectbox('Select Hour', df['hr'].unique())
+    holiday = col1.radio('Holiday', ['Yes', 'No'])
+    holiday = 1 if holiday == 'Yes' else 0
+    selected_weather = col1.selectbox('Select Weather Situation', weather_situations.keys())
 
     temperature = col2.slider('Temperature (C)', min_value=min_temp, max_value=max_temp, value=default_temp)
     temperature = (temperature - min_temp) / (max_temp - min_temp)
@@ -241,6 +249,7 @@ def simulator_content(tab, model, col_names):
     windspeed = col2.slider('Windspeed (km/h)', min_value=0, max_value=max_windspeed, value=default_windspeed)
     windspeed = ((windspeed) / max_windspeed)
 
+    
     # Add a button to simulate the scenario
     if tab.button('Simulate'):
         with st.spinner('Wait for it...'):
@@ -249,10 +258,10 @@ def simulator_content(tab, model, col_names):
             input_features = [[seasons[selected_season],  # season (e.g., 3 for fall
                             months[selected_month],   # mnth (e.g., 7 for July)
                             selected_hour,  # hr (e.g., 12 for noon)
-                            0,   # holiday (e.g., 0 for no holiday)
-                            4,   # weekday (e.g., 4 for Thursday)
-                            1,   # workingday (e.g., 1 for working day)
-                            2,   # weathersit (e.g., 2 for mist + cloudy)
+                            holiday,   # holiday (e.g., 0 for no holiday)
+                            weekdays[weekday],   # weekday (e.g., 4 for Thursday)
+                            workingday,   # workingday (e.g., 1 for working day)
+                            weather_situations[selected_weather],   # weathersit (e.g., 2 for mist + cloudy)
                             temperature,  # temp (normalized temperature)
                             atemperature, # atemp (normalized feeling temperature)
                             humidity, # hum (normalized humidity)
@@ -260,7 +269,9 @@ def simulator_content(tab, model, col_names):
 
             pred_df = pd.DataFrame(input_features, columns=column_names)
             prediction = model.predict(pred_df)
-            tab.write(f'Predicted Bike Counts: {int(prediction[0])}')
+            if prediction < 0:
+                prediction = 0
+            tab.metric('Predicted Bike Counts', int(prediction[0]))
     
 # Footer
 def footer():
