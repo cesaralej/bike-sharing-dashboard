@@ -100,7 +100,7 @@ def weather_request(col_names):
 # Header components
 def header():
     col1, col2 = st.columns([1, 5])
-    col1.image('images/bike-sharing.jpg', use_column_width=True)
+    col1.image('images/Artboard – 3.png', use_column_width=True)
     col2.title('BiciWash BI Dashboard')
     col2.write("Welcome to BiciWash's analysis and prediction dashboard.")
     col2.write("BiciWash is an eBike sharing company that operates in Boston, MA. Data from 2011 and 2012 has been used for this dashboard.")
