@@ -363,10 +363,10 @@ def simulator_content(tab, model, col_names):
 # Footer
 def footer():
     # Define company information
-    company_name = "BiciWash - Group 4"
+    company_name = "BiciDC - Group 4"
     company_logo = "images/logo_footer.png"
     company_address = "123 Main Street, Washington, D.C."
-    company_email = "info@biciwash.com"
+    company_email = "info@bicidc.com"
     company_phone = "+1 (123) 456-7890"
 
     # Create the footer layout
