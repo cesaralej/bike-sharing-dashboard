@@ -117,7 +117,7 @@ def weather_request(col_names):
 # Header components
 def header():
     col1, col2 = st.columns([1, 5])
-    col1.image('images/Artboard – 3.png', use_column_width=True)
+    col1.image('images/logo_header.png', use_column_width=True)
     col2.title('BiciDC BI Dashboard')
     col2.write("Welcome to BiciWash's analysis and prediction dashboard.")
     col2.write("BiciDC is the eBike provisioning company that operates for Washington D.C.'s public transport department. Data from 2011 and 2012 has been used for this dashboard.")
@@ -364,7 +364,7 @@ def simulator_content(tab, model, col_names):
 def footer():
     # Define company information
     company_name = "BiciWash - Group 4"
-    company_logo = "images/Artboard – 3.png"
+    company_logo = "images/logo_footer.png"
     company_address = "123 Main Street, Washington, D.C."
     company_email = "info@biciwash.com"
     company_phone = "+1 (123) 456-7890"
@@ -377,7 +377,7 @@ def footer():
         f"Contact: {company_address} | Email: [{company_email}](mailto:{company_email}) | Phone: {company_phone}"
     )
     col2.write(f"Follow us: [Yahoo Humans](https://www.snapchat.com) | [MySpace 2](https://www.instagram.com) | [MSN Messenger Stories](https://www.facebook.com)")
-    col1.image(company_logo, width=100)
+    col1.image(company_logo, use_column_width=True)
 
 # Main content
 header()
