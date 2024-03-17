@@ -119,7 +119,7 @@ def header():
     col1, col2 = st.columns([1, 5])
     col1.image('images/logo_header.png', use_column_width=True)
     col2.title('BiciDC BI Dashboard')
-    col2.write("Welcome to BiciWash's analysis and prediction dashboard.")
+    col2.write("Welcome to BiciDC's analysis and prediction dashboard.")
     col2.write("BiciDC is the eBike provisioning company that operates for Washington D.C.'s public transport department. Data from 2011 and 2012 has been used for this dashboard.")
 
 # Function to get the month with the most rentals
